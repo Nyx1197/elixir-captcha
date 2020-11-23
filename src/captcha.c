@@ -18,35 +18,46 @@ void makegif(unsigned char im[70*200], unsigned char gif[gifsize], int style) {
   // tag ; widthxheight ; GCT:0:0:7 ; bgcolor + aspect // GCT
   // Image Separator // left x top // widthxheight // Flags
   // LZW code size
-  srand(time(NULL));
-  int color_len = (int) sizeof(colors) / sizeof(colors[0]);
-  int color_idx = rand() % color_len;
-  if (style == 0) {
-    color_idx = 0;
-  }
-  memcpy(gif,colors[color_idx],13+48+10+1);
+memcpy(gif,"GIF89a" "\xc8\0\x46\0" "\x83" "\0\0"
+		"\x00\x00\x00"
+		"\x10\x10\x10"
+		"\x20\x20\x20"
+		"\x30\x30\x30"
+		"\x40\x40\x40"
+		"\x50\x50\x50"
+		"\x60\x60\x60"
+		"\x70\x70\x70"
+		"\x80\x80\x80"
+		"\x90\x90\x90"
+		"\xa0\xa0\xa0"
+		"\xb0\xb0\xb0"
+		"\xc0\xc0\xc0"
+		"\xd0\xd0\xd0"
+		"\xe0\xe0\xe0"
+		"\xff\xff\xff"
+		"," "\0\0\0\0" "\xc8\0\x46\0" "\0" "\x04",13+48+10+1);
 
-  int x,y;
-  unsigned char *i=im;
-  unsigned char *p=gif+13+48+10+1;
-  for(y=0;y<70;y++) {
-    *p++=250; // Data length 5*50=250
-    for(x=0;x<50;x++)
-    {
-      unsigned char a=i[0]>>4,b=i[1]>>4,c=i[2]>>4,d=i[3]>>4;
+	int x,y;
+	unsigned char *i=im;
+	unsigned char *p=gif+13+48+10+1;
+	for(y=0;y<70;y++) {
+		*p++=250; // Data length 5*50=250
+		for(x=0;x<50;x++)
+		{
+			unsigned char a=i[0]>>4,b=i[1]>>4,c=i[2]>>4,d=i[3]>>4;
 
-      p[0]=16|(a<<5);     // bbb10000
-      p[1]=(a>>3)|64|(b<<7);  // b10000xb
-      p[2]=b>>1;      // 0000xbbb
-      p[3]=1|(c<<1);    // 00xbbbb1
-      p[4]=4|(d<<3);    // xbbbb100
-      i+=4;
-      p+=5;
-    }
-  }
+			p[0]=16|(a<<5);			// bbb10000
+			p[1]=(a>>3)|64|(b<<7);	// b10000xb
+			p[2]=b>>1;			// 0000xbbb
+			p[3]=1|(c<<1);		// 00xbbbb1
+			p[4]=4|(d<<3);		// xbbbb100
+			i+=4;
+			p+=5;
+		}
+	}
 
-  // Data length // End of LZW (b10001) // Terminator // GIF End
-  memcpy(gif+gifsize-4,"\x01" "\x11" "\x00" ";",4);
+ 	// Data length // End of LZW (b10001) // Terminator // GIF End
+	memcpy(gif+gifsize-4,"\x01" "\x11" "\x00" ";",4);
 }
 
 static const int8_t sw[200]={0, 4, 8, 12, 16, 20, 23, 27, 31, 35, 39, 43, 47, 50, 54, 58, 61, 65, 68, 71, 75, 78, 81, 84, 87, 90, 93, 96, 98, 101, 103, 105, 108, 110, 112, 114, 115, 117, 119, 120, 121, 122, 123, 124, 125, 126, 126, 127, 127, 127, 127, 127, 127, 127, 126, 126, 125, 124, 123, 122, 121, 120, 119, 117, 115, 114, 112, 110, 108, 105, 103, 101, 98, 96, 93, 90, 87, 84, 81, 78, 75, 71, 68, 65, 61, 58, 54, 50, 47, 43, 39, 35, 31, 27, 23, 20, 16, 12, 8, 4, 0, -4, -8, -12, -16, -20, -23, -27, -31, -35, -39, -43, -47, -50, -54, -58, -61, -65, -68, -71, -75, -78, -81, -84, -87, -90, -93, -96, -98, -101, -103, -105, -108, -110, -112, -114, -115, -117, -119, -120, -121, -122, -123, -124, -125, -126, -126, -127, -127, -127, -127, -127, -127, -127, -126, -126, -125, -124, -123, -122, -121, -120, -119, -117, -115, -114, -112, -110, -108, -105, -103, -101, -98, -96, -93, -90, -87, -84, -81, -78, -75, -71, -68, -65, -61, -58, -54, -50, -47, -43, -39, -35, -31, -27, -23, -20, -16, -12, -8, -4};
@@ -159,7 +170,9 @@ void captcha(unsigned char im[70*200], unsigned char l[6]) {
   close(f);
 
   memset(im,0xff,200*70); s1=s1&0x7f; s2=s2&0x3f; l[0]%=8; l[1]%=8; l[2]%=8; l[3]%=8; l[4]%=8; l[5]=0;
-  int p=30; p=letter(l[0],p,im,swr,s1,s2); p=letter(l[1],p,im,swr,s1,s2); p=letter(l[2],p,im,swr,s1,s2); p=letter(l[3],p,im,swr,s1,s2); letter(l[4],p,im,swr,s1,s2);
+//  int p=30;
+  int p = 10;
+  p=letter(l[0],p,im,swr,s1,s2); p=letter(l[1],p,im,swr,s1,s2); p=letter(l[2],p,im,swr,s1,s2); p=letter(l[3],p,im,swr,s1,s2); letter(l[4],p,im,swr,s1,s2);
   line(im,swr,s1); dots(im); // blur(im); // filter(im);
   l[0]=letters[l[0]]; l[1]=letters[l[1]]; l[2]=letters[l[2]]; l[3]=letters[l[3]]; l[4]=letters[l[4]];
 }
