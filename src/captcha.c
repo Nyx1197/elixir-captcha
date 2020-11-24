@@ -173,7 +173,9 @@ void captcha(unsigned char im[70*200], unsigned char l[6]) {
 //  int p=30;
   int p = 10;
   p=letter(l[0],p,im,swr,s1,s2); p=letter(l[1],p,im,swr,s1,s2); p=letter(l[2],p,im,swr,s1,s2); p=letter(l[3],p,im,swr,s1,s2); letter(l[4],p,im,swr,s1,s2);
-  line(im,swr,s1); dots(im); // blur(im); // filter(im);
+//  line(im,swr,s1); dots(im);
+  blur(im);
+  // filter(im);
   l[0]=letters[l[0]]; l[1]=letters[l[1]]; l[2]=letters[l[2]]; l[3]=letters[l[3]]; l[4]=letters[l[4]];
 }
 
